@@ -20,12 +20,12 @@
         <div class="w-full md:w-1/2 p-8">
             <h2 class="text-2xl font-semibold text-[#7380eC] text-center mb-6">Créer un compte</h2>
 
-            <form method="post" action="" class="space-y-4">
+            <form method="post" action="index.php?action=register" class="space-y-4">
                 
                 <!-- Champ Nom -->
                 <div>
                     <label class="block text-gray-700">Nom complet</label>
-                    <input type="text" name="name" required placeholder="Votre nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7380eC] focus:outline-none">
+                    <input type="text" name="username" required placeholder="Votre nom" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7380eC] focus:outline-none">
                 </div>
 
                 <!-- Champ Email -->
