@@ -64,7 +64,7 @@
                 <!-- Lien vers connexion -->
                 <p class="text-center text-gray-700">
                     Vous avez déjà un compte ? 
-                    <a href="/login" class="text-[#7380eC] hover:underline">Connexion</a>
+                    <a href="/usersManagement/app/views/authentification/login.php" class="text-[#7380eC] hover:underline">Connexion</a>
                 </p>
 
             </form>

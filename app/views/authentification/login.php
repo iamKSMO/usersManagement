@@ -20,7 +20,7 @@
         <div class="w-full md:w-1/2 p-8">
             <h2 class="text-2xl font-semibold text-[#7380eC] text-center mb-6">Connexion</h2>
 
-            <form method="post" action="" class="space-y-4">
+            <form method="post" action="/usersManagement/index.php?action=login" class="space-y-4">
                 
                 <!-- Champ Email -->
                 <div>
@@ -49,7 +49,7 @@
                 <!-- Lien vers inscription -->
                 <p class="text-center text-gray-700">
                     Vous n'avez pas de compte ? 
-                    <a href="/register" class="text-[#7380eC] hover:underline">S'inscrire</a>
+                    <a href="/usersManagement/app/views/authentification/register.php" class="text-[#7380eC] hover:underline">S'inscrire</a>
                 </p>
 
             </form>

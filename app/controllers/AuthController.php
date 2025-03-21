@@ -29,7 +29,7 @@ class AuthController {
 
             // Enregistrer l'utilisateur
             if ($this->userModel->register($username, $email, $password, $role)) {
-                header("Location: /usersManagement/app/views/authentification/login.php");
+                header("Location: /usersManagement/app/views/user/profile.php");
                 exit;
             } else {
                 echo "Erreur lors de l'inscription.";
@@ -38,56 +38,102 @@ class AuthController {
     }
 
     // Gérer la connexion
-//     public function login() {
-//         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//             $email = trim($_POST['email']);
-//             $password = $_POST['password'];
+    public function login() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
 
-//             $user = $this->userModel->login($email, $password);
+            $user = $this->userModel->login($email, $password);
+            
 
-//             if ($user) {
-//                 $_SESSION['user'] = $user;
+            if ($user) {
+                $_SESSION['user'] = $user;
 
-//                 // Option "Se souvenir de moi"
-//                 if (isset($_POST['remember'])) {
-//                     setcookie("email", $email, time() + 3600 * 24 * 30, "/"); // Cookie pour 30 jours
-//                 }
+                // enregistrer la connexion dans la table sessions 
+                $sessionId = $this->userModel->logUserSession($user['id']);
 
-//                 // Redirection selon le rôle
-//                 if ($user['role_name'] == 'admin') {
-//                     header("Location: /admin/dashboard.php");
-//                 } else {
-//                     header("Location: /client/profile.php");
-//                 }
-//                 exit;
-//             } else {
-//                 echo "Email ou mot de passe incorrect.";
-//             }
-//         }
-//     }
+                // on stocke l' id de la session en cours
+                $_SESSION['session_id'] = $sessionId;
 
-//     // Gérer la déconnexion
-//     public function logout() {
-//         session_destroy();
-//         setcookie("email", "", time() - 3600, "/"); // Supprime le cookie
-//         header("Location: /login.php");
-//         exit;
-//     }
+                // Option "Se souvenir de moi"
+                if (isset($_POST['remember'])) {
+                    setcookie("email", $email, time() + 3600 * 24 * 30, "/"); // Cookie pour 30 jours
+                }
+
+                // Redirection selon le rôle
+                if ($user['role_name'] == 'admin') {
+                    header("Location: /usersManagement/app/views/admin/dashboard.php");
+                    echo "vous etes connectés admin";
+                } else {
+                    header("Location: /usersManagement/app/views/user/profile.php");
+                    echo "vous etes connectés client";
+                }
+                exit;
+            } else {
+                echo "Email ou mot de passe incorrect.";
+            }
+        }
+    }
+
+    
+
+
+    // modifications du profil
+public function updateUser() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $userId = $_SESSION['user']['id'];
+        $username = trim($_POST['usernameU']);
+        $email = trim($_POST['emailU']);
+
+        // Vérifier si les champs sont remplis
+        if (empty($username) || empty($email)) {
+            echo "Tous les champs sont obligatoires.";
+            return;
+        }
+
+        // Mise à jour des informations
+        $updated = $this->userModel->updateUserInfo($userId, $username, $email);
+
+        if ($updated) {
+            // Mettre à jour la session
+            $_SESSION['user']['username'] = $username;
+            $_SESSION['user']['email'] = $email;
+
+            // Redirection vers le profil
+            header("Location: profile.php");
+            exit;
+        } else {
+            echo "Erreur lors de la mise à jour.";
+        }
+    }
+}
+
+// Afficher l'historique des connexions
+public function showLoginHistory() {
+    // Vérifie si l'utilisateur est connecté
+    if (isset($_SESSION['user']['id'])) {
+        $userId = $_SESSION['user']['id'];
+
+        // Récupérer l'historique des connexions de l'utilisateur
+        $loginHistory = $this->userModel->getLoginHistory($userId);
+
+        // Passer l'historique des connexions à la vue
+        require_once __DIR__ . '/../views/user/profile.php';
+    } else {
+        // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
+        header("Location: /login.php");
+        exit;
+    }
+}
+
+}
+
+// Afficher les informations personnelles de l'utilisateur
+// public function showUserInfo($userId) {
+//     $userInfo = $this->userModel->getUserInfo($userId);
+//     return $userInfo;
 // }
 
-// // Instanciation du contrôleur
-// $authController = new AuthController($pdo);
 
-// // Déterminer l'action en fonction de la requête
-// if (isset($_GET['action'])) {
-//     $action = $_GET['action'];
 
-//     if ($action === 'register') {
-//         $authController->register();
-//     } elseif ($action === 'login') {
-//         $authController->login();
-//     } elseif ($action === 'logout') {
-//         $authController->logout();
-//     }
-}
 ?>
